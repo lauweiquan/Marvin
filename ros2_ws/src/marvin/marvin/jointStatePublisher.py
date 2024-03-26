@@ -4,6 +4,8 @@ from rclpy.node import Node
 from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
+import serial
+from rclpy.logging import get_logger
 
 class JointStatePublisher(Node):
 
@@ -82,9 +84,21 @@ class JointStatePublisher(Node):
 
         # Publish the JointState message
         self.joint_state_publisher.publish(joint_state_msg)
+        # print(joint_state_msg.position)
+        ser = serial.Serial('/dev/ttyACM1', 9600)
+        ser.write(bytearray(joint_state_msg.position))
+        # data = ser.readline().decode('utf-8').strip()
+        # print("printing data")
+        # print(data)
 
 def main(args=None):
+    logger = get_logger(__name__)
+    logger.info("Node is initialized!")
     rclpy.init(args=args)
+    # ser = serial.Serial('/dev/ttyACM1', 9600)
+    # data = ser.readline().decode().strip()
+    # print(data)
+    # logger.info(data)
     joint_state_publisher = JointStatePublisher()
     rclpy.spin(joint_state_publisher)
     joint_state_publisher.destroy_node()

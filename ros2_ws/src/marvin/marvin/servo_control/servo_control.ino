@@ -17,23 +17,22 @@ void setup()
     }
 }
 
-byte angle[6];
+byte angle[3];
 byte pre_angle[3];
 long t = millis();
-const float Pi = 3.141593;
+// const float Pi = 3.141593; // *(180/Pi) to convert from rad to deg
 
 void loop()
 {
-    Serial.write("testing");
     // Serial.print("looping");
     if (Serial.available())
+    // Serial.write("testing");
     // Serial.println("serial is avail");
     {
-        Serial.readBytes(angle, 6);
+        Serial.readBytes(angle, 3);
         for (size_t i = 0; i < 3; i++)
         {
-            angle[i] = angle[i] * (180/Pi);
-            Serial.print(angle[i]);
+            Serial.write(angle[i]);
             if (angle[i] != pre_angle[i])
             {
                 servo[i].write(angle[i]);

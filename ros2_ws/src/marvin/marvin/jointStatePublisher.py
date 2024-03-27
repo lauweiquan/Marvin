@@ -5,11 +5,13 @@ from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
 import serial
-from rclpy.logging import get_logger
+
+from time import sleep
 
 class JointStatePublisher(Node):
 
     def __init__(self):
+        self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0.1)
         super().__init__('joint_state_publisher')
         self.left_shoulder_flexion_subscription = self.create_subscription(
             Float64,
@@ -84,16 +86,26 @@ class JointStatePublisher(Node):
 
         # Publish the JointState message
         self.joint_state_publisher.publish(joint_state_msg)
+
+        # joint_state_msg.position = [
+        #                     (self.joint_angles['left_shoulder_flexion']) * (180/np.pi), 
+        #                     (-self.joint_angles['left_shoulder_adduction'] + np.pi/2) * (180/np.pi), 
+        #                     (self.joint_angles['elbow'] + np.pi/2) * (180/np.pi), 
+        #                     # self.joint_angles['wrist'] + np.pi/2,
+        #                     ]
+
+        
         # print(joint_state_msg.position)
-        ser = serial.Serial('/dev/ttyACM1', 9600)
-        ser.write(bytearray(joint_state_msg.position))
+        self.get_logger().info("serial readline initialised")
+        self.get_logger().info(self.ser.read().hex())
+        self.ser.write(bytearray(joint_state_msg.position))
         # data = ser.readline().decode('utf-8').strip()
         # print("printing data")
         # print(data)
 
 def main(args=None):
-    logger = get_logger(__name__)
-    logger.info("Node is initialized!")
+    # logger = get_logger(__name__)
+    # logger.info("Node is initialized!")
     rclpy.init(args=args)
     # ser = serial.Serial('/dev/ttyACM1', 9600)
     # data = ser.readline().decode().strip()

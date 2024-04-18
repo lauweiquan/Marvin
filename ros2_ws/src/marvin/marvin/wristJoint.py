@@ -44,7 +44,7 @@ class WristAngleSubscriber(Node):
         # Calculate angles
         left_wrist_angle = calculate_angle(left_wrist_arm, left_forearm)
         right_wrist_angle = calculate_angle(right_wrist_arm, right_forearm)
-        print(left_wrist_angle)
+        # print(left_wrist_angle)
 
         # Convert angle to radians and publish
         left_wrist_angle_msg = Float64()
